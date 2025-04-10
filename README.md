@@ -43,7 +43,7 @@ Real-time usability in potential monitoring systems
 
 Efficiency for parameter sweeps, sensitivity analysis, or Monte Carlo runs
 
-The RNN essentially learns to emulate the complex behavior of the system—including nonlinear transitions—and provides a lightweight tool for forecasting and scenario exploration.
+The RNN essentially learns to emulate the complex behavior of the system-including nonlinear transitions—and provides a lightweight tool for forecasting and scenario exploration.
 
 ---
 
