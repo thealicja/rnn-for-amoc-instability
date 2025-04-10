@@ -1,6 +1,6 @@
 # RNN for AMOC Instability 🌊
 
-This project explores the use of **Recurrent Neural Networks (RNN)**—specifically **Reservoir Computing (Echo State Networks)**—to detect and forecast tipping points in a simplified climate model representing the **Atlantic Meridional Overturning Circulation (AMOC)**.
+This project explores the use of **Recurrent Neural Networks (RNN)** - specifically **Reservoir Computing (Echo State Networks)** - to detect and forecast tipping points in a simplified climate model representing the **Atlantic Meridional Overturning Circulation (AMOC)**.
 
 We aim to anticipate **transitions to transient chaos and eventual system collapse** in the AMOC by training machine learning models on synthetic time series data generated from a coupled physical model.
 
