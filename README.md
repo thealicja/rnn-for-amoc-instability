@@ -30,6 +30,23 @@ Key Features:
 
 ---
 
+## 🧠 Why Use Machine Learning If We Have the Equations?
+While the underlying system is governed by known physical equations, training a recurrent neural network (RNN) offers key advantages:
+
+Fast predictions without re-solving the ODE system
+
+Generalization across bifurcation parameters
+
+Early-warning capabilities by detecting precursor patterns of tipping
+
+Real-time usability in potential monitoring systems
+
+Efficiency for parameter sweeps, sensitivity analysis, or Monte Carlo runs
+
+The RNN essentially learns to emulate the complex behavior of the system—including nonlinear transitions—and provides a lightweight tool for forecasting and scenario exploration.
+
+---
+
 ## 📁 Structure
 
 /matlab_code/ # Original dynamical model and training scripts (MATLAB) 
