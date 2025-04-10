@@ -33,9 +33,13 @@ Key Features:
 ## 📁 Structure
 
 /matlab_code/ # Original dynamical model and training scripts (MATLAB) 
+
 /python_code/ # Translated/rewritten training + RNN models (Python) 
+
 /data/ # Placeholder for training/validation data 
+
 /results/ # Placeholder for plots and predictions 
+
 README.md # This file
 
 
