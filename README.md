@@ -1,105 +1,137 @@
 # RNN for AMOC Instability 🌊
 
-This project explores the use of **Recurrent Neural Networks (RNN)** - specifically **Reservoir Computing (Echo State Networks)** - to detect and forecast tipping points in a simplified climate model representing the **Atlantic Meridional Overturning Circulation (AMOC)**.
+**Goal:** Use a lightweight **Reservoir Computing (Echo State Network)** to learn, detect, and forecast tipping behavior (transient chaos → collapse) in a simplified model of the **Atlantic Meridional Overturning Circulation (AMOC)**.
 
-We aim to anticipate **transitions to transient chaos and eventual system collapse** in the AMOC by training machine learning models on synthetic time series data generated from a coupled physical model.
+Workflow overview:
 
----
+1. **Generate synthetic time series** from a 5‑dimensional climate box model (Van Veen–Cessi style).
+2. **Train an ESN** on those trajectories at several freshwater‑flux (bifurcation) values.
+3. **Pick the best reservoir** (best‑of strategy).
+4. **Use the trained ESN** to predict at new parameter values faster than solving ODEs again.
 
-## 🔬 About the Model
 
-The system is based on a **5-dimensional box model** inspired by **Van Veen (2000)** and **Cessi (1994)**. It couples:
-- Chaotic dynamics (x, y, z) modeled after Lorenz-style systems
-- Ocean **temperature (T)** and **salinity (S)** dynamics
-- External forcing (e.g., freshwater input) affecting system stability
+## 🔎 Repository Structure
 
----
 
-## 🧠 Machine Learning Approach
+climate\_model/
+VV\_model.m        % 5D RHS of the coupled dynamical system
+vv\_params.m       % Default physical parameters (a, b, Fs, etc.)
+ode4.m            % 4th-order Runge–Kutta solver (constant step)
+generate\_data.m   % Integrates VV\_model for a list of Fs values and packs data
 
-The model is trained using:
-- **Reservoir Computing (Echo State Networks)**
-- Custom training loop in both **MATLAB** and **Python**
-- Time series are generated across multiple bifurcation parameters
-- Validation is performed via RMSE, prediction horizon, or error threshold
+rnn\_reservoir/
+rnn\_params.m      % ESN hyperparameters (n, k, eig\_rho, etc.) and lengths
+rnn\_train.m       % One-shot ESN training + validation on multi-param data
+rnn\_predict.m     % Forecasting with a trained ESN (warm-up + closed loop)
+run\_training.m    % End-to-end script: generate data → train ESN (best-of) → save results
 
-Key Features:
-- Spectral radius scaling
-- Multiple training trials (best-of strategy)
-- Predictive generalization to unseen parameter regimes
+results/            % (created at runtime) saved .mat with best model and predictions
+data/               % (optional) put large .mat/.csv datasets here if you export them
 
----
 
-## 🧠 Why Use Machine Learning If We Have the Equations?
-While the underlying system is governed by known physical equations, training a recurrent neural network (RNN) offers key advantages:
+## 🚀 Quickstart (MATLAB)
 
-Fast predictions without re-solving the ODE system
+Requires MATLAB (or Octave with sparse/eigs compatibility). Tested with R202x.
 
-Generalization across bifurcation parameters
+1. **Clone or download** this repo.
+2. Open MATLAB in the repo root.
+3. Run:
+>> run_training
 
-Early-warning capabilities by detecting precursor patterns of tipping
 
-Real-time usability in potential monitoring systems
+This will:
 
-Efficiency for parameter sweeps, sensitivity analysis, or Monte Carlo runs
-
-The RNN essentially learns to emulate the complex behavior of the system-including nonlinear transitions and provides a lightweight tool for forecasting and scenario exploration.
-
----
-
-## 📁 Structure
-
-/matlab_code/ # Original dynamical model and training scripts (MATLAB) 
-
-/python_code/ # Translated/rewritten training + RNN models (Python) 
-
-/data/ # Placeholder for training/validation data 
-
-/results/ # Placeholder for plots and predictions 
-
-README.md # This file
-
+* Integrate the VV climate model for `Fs_list = [0.97 0.98 0.99]`
+* Train the ESN `bo` times (default 5) with different random seeds
+* Save the best model to `results/best_reservoir.mat`
+* Plot one validation trace vs. prediction
 
 ---
 
-## 📊 Example Output (coming soon!)
+### 🔁 Predict at a New Parameter (Example)
 
-Plots of:
-- Predicted vs. actual time series
-- Relative prediction error over time
-- RMSE across bifurcation parameters
+After training, you can load the model and predict at a new freshwater flux, e.g. `Fs = 1.01`:
+
+load('results/best_reservoir.mat', 'best', 'R');
+
+% Warm-up series: use one of the validation trajectories, for instance
+warmup_series = squeeze(best.x_real(1, :, :));  % [time x dim]
+
+% Parameter channel (dim_tp = 1 here)
+new_Fs = 1.01;
+tp_vec = new_Fs;
+
+% Prediction settings
+warmup_len  = 100;    % steps for warm-up
+predict_cut = 0;      % drop initial transient (if desired)
+predict_len = 500;    % steps to predict
+
+flag_pred = [R.n, R.dim, R.a, warmup_len, predict_cut, predict_len];
+
+y_hat = rnn_predict(warmup_series, tp_vec, best.W_in, best.W_r, best.W_out, flag_pred);
+
+plot(y_hat(:,1)); title('Predicted state dim 1'); xlabel('step');
+
+
+## 🧠 Why a Neural Reservoir if We Already Have the Equations?
+
+* **Speed:** Once trained, the ESN predicts future states without integrating ODEs step-by-step.
+* **Generalization:** A single ESN can emulate system dynamics across multiple parameter values.
+* **Early warning:** Query the ESN as parameters drift to anticipate a tipping event.
+* **Scalability:** Great for parameter sweeps, Monte Carlo runs, or real-time systems.
+
+The ESN acts as a learned surrogate of the ODE system—capturing nonlinear transitions while being computationally cheap at run time.
+
+## 🧩 Model Details
+
+* **Dynamics:** 5D system `(x, y, z, T, S)`
+
+  * `(x, y, z)` ≈ Lorenz-84-like atmospheric subsystem
+  * `(T, S)` ≈ temperature/salinity boxes (Cessi-style)
+  * Coupling + freshwater flux (`Fs`) drive chaotic and transient regimes
+* **Integration:** `ode4.m` (fixed-step RK4). Swap in `ode45` if you prefer adaptive steps.
+* **Data tensor shape:** `(n_params, n_time_steps, dim + param_dim)` where `param_dim = 1` (Fs channel).
 
 ---
 
-## 🛠️ Tools Used
+## 📊 Validation Metrics
 
-- MATLAB
-- Python (NumPy, SciPy, Matplotlib)
-- Custom RK4 ODE solvers
-- Echo State Network implementation
+Set in `R.validation_type`:
+
+1. **Max RMSE** over parameter trials
+2. **Success length** (time until error exceeds a threshold)
+3. **Product of RMSEs** (penalizes any single bad trial)
+4. **Average RMSE**
 
 ---
 
-## 🙌 You Can Help!
+## 🛠 Tech Stack
 
-I'm currently cleaning up and documenting the code. If you're curious about:
-- Machine learning for climate
-- Reservoir computing
-- Dynamical systems and tipping points
+* **MATLAB** (core implementation)
+* (Optional) **Python** ports/notebooks can be added for broader accessibility
 
-Feel free to **open an issue, ask a question, or contribute**!  
-This repo is intended as a learning and collaboration space. Let's explore these tipping points together 🌍
+---
+
+## 🙋 Contributing / Using This
+
+* Open an issue if you spot bugs or want to add features (e.g., Bayesian hyperparameter search, PyTorch port, visualization notebooks).
+* Pull Requests are welcome—clear code and comments appreciated!
+* This repo serves as a learning+collab space for ML + climate dynamics.
 
 ---
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute it.
+Released under the **MIT License**. See `LICENSE` for details.
 
 ---
 
 ## 📬 Contact
 
-Made with curiosity and chaos in mind.  
-Feel free to connect or collaborate!
+Made with curiosity (and a bit of chaos) in mind.
+If you’re into climate tipping points, reservoir computing, or dynamical systems, feel free to reach out or start a discussion!
 
+```
+
+::contentReference[oaicite:0]{index=0}
+```
