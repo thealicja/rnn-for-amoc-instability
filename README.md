@@ -4,7 +4,7 @@
 
 Workflow overview:
 
-1. **Generate synthetic time series** from a 5‑dimensional climate box model (Van Veen–Cessi style).
+1. **Generate synthetic time series** from a 5‑dimensional climate box model (Van Veen-Cessi style).
 2. **Train an ESN** on those trajectories at several freshwater‑flux (bifurcation) values.
 3. **Pick the best reservoir** (best‑of strategy).
 4. **Use the trained ESN** to predict at new parameter values faster than solving ODEs again.
