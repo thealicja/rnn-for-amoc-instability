@@ -12,21 +12,21 @@ Workflow overview:
 
 ## 🔎 Repository Structure
 
-
->> climate\_model/
->> VV\_model.m        % 5D RHS of the coupled dynamical system
->> vv\_params.m       % Default physical parameters (a, b, Fs, etc.)
->> ode4.m            % 4th-order Runge–Kutta solver (constant step)
->> generate\_data.m   % Integrates VV\_model for a list of Fs values and packs data
-
->> rnn\_reservoir/
->> rnn\_params.m      % ESN hyperparameters (n, k, eig\_rho, etc.) and lengths
->> rnn\_train.m       % One-shot ESN training + validation on multi-param data
->> rnn\_predict.m     % Forecasting with a trained ESN (warm-up + closed loop)
->> run\_training.m    % End-to-end script: generate data → train ESN (best-of) → save results
-
->> results/            % (created at runtime) saved .mat with best model and predictions
->> data/               % (optional) put large .mat/.csv datasets here if you export them
+.
+├── climate_model/
+│   ├── VV_model.m          % 5D RHS of the coupled dynamical system
+│   ├── vv_params.m         % Default physical parameters (a, b, Fs, etc.)
+│   ├── ode4.m              % 4th-order Runge–Kutta solver (constant step)
+│   └── generate_data.m     % Integrates VV_model for a list of Fs values and packs data
+│
+├── rnn_reservoir/
+│   ├── rnn_params.m        % ESN hyperparameters (n, k, eig_rho, etc.) and lengths
+│   ├── rnn_train.m         % One-shot ESN training + validation on multi-param data
+│   ├── rnn_predict.m       % Forecasting with a trained ESN (warm-up + closed loop)
+│   └── run_training.m      % End-to-end script: generate data → train ESN (best-of) → save results
+│
+├── results/                % (created at runtime) saved .mat with best model and predictions
+└── data/                   % (optional) large .mat/.csv datasets if you export them
 
 
 ## 🚀 Quickstart (MATLAB)
