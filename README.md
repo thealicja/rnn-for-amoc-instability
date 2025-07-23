@@ -130,8 +130,3 @@ Released under the **MIT License**. See `LICENSE` for details.
 
 Made with curiosity (and a bit of chaos) in mind.
 If you’re into climate tipping points, reservoir computing, or dynamical systems, feel free to reach out or start a discussion!
-
-```
-
-::contentReference[oaicite:0]{index=0}
-```
