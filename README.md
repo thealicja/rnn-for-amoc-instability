@@ -11,7 +11,7 @@ Workflow overview:
 
 
 ## 🔎 Repository Structure
-
+'''
 .
 ├── climate_model/
 │   ├── VV_model.m          % 5D RHS of the coupled dynamical system
@@ -27,7 +27,7 @@ Workflow overview:
 │
 ├── results/                % (created at runtime) saved .mat with best model and predictions
 └── data/                   % (optional) large .mat/.csv datasets if you export them
-
+'''
 
 ## 🚀 Quickstart (MATLAB)
 
