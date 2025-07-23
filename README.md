@@ -4,9 +4,9 @@
 
 Workflow overview:
 
-1. **Generate synthetic time series** from a 5‑dimensional climate box model (Van Veen-Cessi style).
-2. **Train an ESN** on those trajectories at several freshwater‑flux (bifurcation) values.
-3. **Pick the best reservoir** (best‑of strategy).
+1. **Generate synthetic time series** from a 5-dimensional climate box model (Van Veen-Cessi style).
+2. **Train an ESN** on those trajectories at several freshwater-flux (bifurcation) values.
+3. **Pick the best reservoir** (best-of strategy).
 4. **Use the trained ESN** to predict at new parameter values faster than solving ODEs again.
 
 
@@ -80,7 +80,7 @@ plot(y_hat(:,1)); title('Predicted state dim 1'); xlabel('step');
 * **Early warning:** Query the ESN as parameters drift to anticipate a tipping event.
 * **Scalability:** Great for parameter sweeps, Monte Carlo runs, or real-time systems.
 
-The ESN acts as a learned surrogate of the ODE system—capturing nonlinear transitions while being computationally cheap at run time.
+The ESN acts as a learned surrogate of the ODE system-capturing nonlinear transitions while being computationally cheap at run time.
 
 ## 🧩 Model Details
 
@@ -115,7 +115,7 @@ Set in `R.validation_type`:
 ## 🙋 Contributing / Using This
 
 * Open an issue if you spot bugs or want to add features (e.g., Bayesian hyperparameter search, PyTorch port, visualization notebooks).
-* Pull Requests are welcome—clear code and comments appreciated!
+* Pull Requests are welcome - clear code and comments appreciated!
 * This repo serves as a learning+collab space for ML + climate dynamics.
 
 ---
