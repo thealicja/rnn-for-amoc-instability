@@ -12,7 +12,6 @@ Workflow overview:
 
 ## 🔎 Repository Structure
 ```
-.
 ├── climate_model/
 │   ├── VV_model.m          % 5D RHS of the coupled dynamical system
 │   ├── vv_params.m         % Default physical parameters (a, b, Fs, etc.)
@@ -36,8 +35,9 @@ Requires MATLAB (or Octave with sparse/eigs compatibility). Tested with R202x.
 1. **Clone or download** this repo.
 2. Open MATLAB in the repo root.
 3. Run:
+```
 >> run_training
-
+```
 
 This will:
 
@@ -51,7 +51,7 @@ This will:
 ### 🔁 Predict at a New Parameter (Example)
 
 After training, you can load the model and predict at a new freshwater flux, e.g. `Fs = 1.01`:
-
+```
 load('results/best_reservoir.mat', 'best', 'R');
 
 % Warm-up series: use one of the validation trajectories, for instance
@@ -71,7 +71,7 @@ flag_pred = [R.n, R.dim, R.a, warmup_len, predict_cut, predict_len];
 y_hat = rnn_predict(warmup_series, tp_vec, best.W_in, best.W_r, best.W_out, flag_pred);
 
 plot(y_hat(:,1)); title('Predicted state dim 1'); xlabel('step');
-
+```
 
 ## 🧠 Why a Neural Reservoir if We Already Have the Equations?
 
